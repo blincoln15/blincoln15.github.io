@@ -2,6 +2,7 @@
 <html>
 <head>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
 </head>
 <ul>
   <li><a href="index.html">Home</a></li>
@@ -10,20 +11,28 @@
   <li style="float:right"><a href="#about">About</a></li>
 </ul>
 <body>
+    <div id="heatmap" style="width: 600px; height: 400px;"></div>
+    <script>
+        const data = [{
+            z: [
+                [1, 20, 30, 40],
+                [50, 1, 60, 70],
+                [80, 90, 1, 100],
+                [110, 120, 130, 1]
+            ],
+            x: ['A', 'B', 'C', 'D'], // Labels for the x-axis
+            y: ['W', 'X', 'Y', 'Z'], // Labels for the y-axis
+            type: 'heatmap',
+            colorscale: 'Viridis' // Color scheme
+        }];
 
-<h1>My First Heading</h1>
-<p>
-Explore the Global Dataset of Historical Yield (GDHYv1.2+v1.3)
-Dive into the comprehensive Global Dataset of Historical Yield (GDHYv1.2+v1.3), a rich resource offering annual time series data on the yield estimates of key crops—maize, rice, wheat, and soybean—across the globe. 
-  Spanning from 1981 to 2016, this dataset presents high-resolution, 0.5-degree grid-cell data in t/ha units, derived from satellite-based vegetation indices and FAO-reported country yield statistics. 
-  With detailed seasonal breakdowns, including "major" and "secondary" growing seasons for maize and rice, and "winter" and "spring" for wheat, the dataset provides nuanced insights into global agricultural patterns.
-  By combining satellite-derived data and established country statistics, GDHY ensures reliable continuity in its time series, particularly in its "aligned version" covering 2011-2016. 
-  Explore how changing geographic and temporal factors affect agricultural productivity and gain valuable insights for research, policy, and global food security planning.  
-  My first paragraph.
+        const layout = {
+            title: 'Heatmap Example',
+            xaxis: { title: 'X-axis' },
+            yaxis: { title: 'Y-axis' }
+        };
 
-Data comes from:
-https://doi.pangaea.de/10.1594/PANGAEA.909132
-</p>
-
+        Plotly.newPlot('heatmap', data, layout);
+    </script>
 </body>
 </html>
