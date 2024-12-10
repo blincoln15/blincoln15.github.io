@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.plot.ly/plotly-2.25.2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script> <!-- For CSV parsing -->
+  <title>Heatmap from CSV</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <ul>
   <li><a href="index.html">Home</a></li>
@@ -12,27 +16,51 @@
 </ul>
 <body>
     <div id="heatmap" style="width: 600px; height: 400px;"></div>
+    <div id="heatmap" style="width: 600px; height: 400px;"></div>
     <script>
-        const data = [{
-            z: [
-                [1, 20, 30, 40],
-                [50, 1, 60, 70],
-                [80, 90, 1, 100],
-                [110, 120, 130, 1]
-            ],
-            x: ['A', 'B', 'C', 'D'], // Labels for the x-axis
-            y: ['W', 'X', 'Y', 'Z'], // Labels for the y-axis
-            type: 'heatmap',
-            colorscale: 'Viridis' // Color scheme
-        }];
+        async function createHeatmap() {
+            // Fetch the CSV file
+            const response = await fetch('output.csv');
+            const csvText = await response.text();
 
-        const layout = {
-            title: 'Heatmap Example',
-            xaxis: { title: 'X-axis' },
-            yaxis: { title: 'Y-axis' }
-        };
+            // Parse CSV using PapaParse
+            const data = Papa.parse(csvText, { header: true, dynamicTyping: true }).data;
 
-        Plotly.newPlot('heatmap', data, layout);
+            // Extract lat, lon, and var
+            const lats = [...new Set(data.map(row => row.lat))]; // Unique latitude values
+            const lons = [...new Set(data.map(row => row.lon))]; // Unique longitude values
+
+            // Create a grid for z (heatmap intensity)
+            const z = Array.from({ length: lats.length }, () => Array(lons.length).fill(null));
+
+            data.forEach(row => {
+                const latIndex = lats.indexOf(row.lat);
+                const lonIndex = lons.indexOf(row.lon);
+                if (latIndex > -1 && lonIndex > -1) {
+                    z[latIndex][lonIndex] = row.var; // Assign var to the grid
+                }
+            });
+
+            // Plot the heatmap
+            const plotData = [{
+                z: z,
+                x: lons, // Longitude as x-axis
+                y: lats, // Latitude as y-axis
+                type: 'heatmap',
+                colorscale: 'Viridis'
+            }];
+
+            const layout = {
+                title: 'Heatmap from CSV',
+                xaxis: { title: 'Longitude' },
+                yaxis: { title: 'Latitude' }
+            };
+
+            Plotly.newPlot('heatmap', plotData, layout);
+        }
+
+        // Call the function to create the heatmap
+        createHeatmap();
     </script>
 </body>
 </html>
