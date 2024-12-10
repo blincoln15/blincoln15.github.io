@@ -18,49 +18,51 @@
     <div id="heatmap" style="width: 600px; height: 400px;"></div>
     <div id="heatmap" style="width: 600px; height: 400px;"></div>
     <script>
-        async function createHeatmap() {
-            // Fetch the CSV file
+        async function createMapboxHeatmap() {
+            // Fetch and parse CSV data
             const response = await fetch('output.csv');
             const csvText = await response.text();
-
-            // Parse CSV using PapaParse
             const data = Papa.parse(csvText, { header: true, dynamicTyping: true }).data;
 
-            // Extract lat, lon, and var
-            const lats = [...new Set(data.map(row => row.lat))]; // Unique latitude values
-            const lons = [...new Set(data.map(row => row.lon))]; // Unique longitude values
+            // Extract data points
+            const lat = data.map(row => row.lat);
+            const lon = data.map(row => row.lon);
+            const z = data.map(row => row.var);
 
-            // Create a grid for z (heatmap intensity)
-            const z = Array.from({ length: lats.length }, () => Array(lons.length).fill(null));
-
-            data.forEach(row => {
-                const latIndex = lats.indexOf(row.lat);
-                const lonIndex = lons.indexOf(row.lon);
-                if (latIndex > -1 && lonIndex > -1) {
-                    z[latIndex][lonIndex] = row.var; // Assign var to the grid
-                }
-            });
-
-            // Plot the heatmap
-            const plotData = [{
+            // Create the heatmap trace
+            const trace = {
+                type: 'densitymapbox',
+                lon: lon,
+                lat: lat,
                 z: z,
-                x: lons, // Longitude as x-axis
-                y: lats, // Latitude as y-axis
-                type: 'heatmap',
-                colorscale: 'Viridis'
-            }];
-
-            const layout = {
-                title: 'Heatmap from CSV',
-                xaxis: { title: 'Longitude' },
-                yaxis: { title: 'Latitude' }
+                colorscale: 'Spectral', // Reversed Spectral color scale
+                coloraxis: 'coloraxis',
+                radius: 10 // Adjust radius for better visualization
             };
 
-            Plotly.newPlot('heatmap', plotData, layout);
+            // Define the layout with Mapbox style
+            const layout = {
+                mapbox: {
+                    style: "carto-positron", // Set the Mapbox style
+                    center: {
+                        lat: lat[0], // Center map on first data point
+                        lon: lon[0]
+                    },
+                    zoom: 4 // Adjust zoom level
+                },
+                coloraxis: {
+                    colorscale: 'Spectral_r' // Reversed Spectral color scale
+                },
+                title: 'Heatmap with Mapbox',
+                margin: { t: 50, b: 0, l: 0, r: 0 } // Adjust margins
+            };
+
+            // Plot the heatmap
+            Plotly.newPlot('heatmap', [trace], layout);
         }
 
         // Call the function to create the heatmap
-        createHeatmap();
+        createMapboxHeatmap();
     </script>
 </body>
 </html>
