@@ -17,52 +17,88 @@
 <body>
     <div id="heatmap" style="width: 600px; height: 400px;"></div>
     <div id="heatmap" style="width: 600px; height: 400px;"></div>
-    <script>
-        async function createMapboxHeatmap() {
-            // Fetch and parse CSV data
-            const response = await fetch('output.csv');
-            const csvText = await response.text();
-            const data = Papa.parse(csvText, { header: true, dynamicTyping: true }).data;
+<script>
+    async function createMapboxHeatmap() {
+        // Define the CSV file names for each dataset
+        const csvFiles = ['output1.csv', 'output2.csv', 'output3.csv', 'output4.csv', 'output5.csv'];
 
-            // Extract data points
+        // Function to load and parse CSV
+        async function loadCsv(file) {
+            const response = await fetch(file);
+            const csvText = await response.text();
+            return Papa.parse(csvText, { header: true, dynamicTyping: true }).data;
+        }
+
+        // Load all datasets
+        const datasets = await Promise.all(csvFiles.map(loadCsv));
+
+        // Process each dataset into a trace
+        const frames = datasets.map((data, index) => {
             const lat = data.map(row => row.lat);
             const lon = data.map(row => row.lon);
             const z = data.map(row => row.var);
 
-            // Create the heatmap trace
-            const trace = {
-                type: 'densitymapbox',
-                lon: lon,
-                lat: lat,
-                z: z,
-                colorscale: 'Spectral', // Reversed Spectral color scale
-                coloraxis: 'coloraxis',
-                radius: 10 // Adjust radius for better visualization
+            return {
+                name: `Output ${index + 1}`,
+                data: [{
+                    type: 'densitymapbox',
+                    lon: lon,
+                    lat: lat,
+                    z: z,
+                    colorscale: 'Spectral',
+                    coloraxis: 'coloraxis',
+                    radius: 10
+                }]
             };
+        });
 
-            // Define the layout with Mapbox style
-            const layout = {
-                mapbox: {
-                    style: "carto-positron", // Set the Mapbox style
-                    center: {
-                        lat: lat[0], // Center map on first data point
-                        lon: lon[0]
+        // Define the initial frame
+        const initialFrame = frames[0].data[0];
+
+        // Define the layout
+        const layout = {
+            mapbox: {
+                style: "carto-positron",
+                center: { lat: datasets[0][0].lat, lon: datasets[0][0].lon },
+                zoom: 4
+            },
+            coloraxis: { colorscale: 'Spectral_r' },
+            title: 'Heatmap with Mapbox Slider',
+            margin: { t: 50, b: 0, l: 0, r: 0 },
+            updatemenus: [{
+                type: 'buttons',
+                showactive: false,
+                x: 0.1,
+                y: -0.2,
+                buttons: [
+                    {
+                        label: 'Play',
+                        method: 'animate',
+                        args: [null, { frame: { duration: 1000, redraw: true }, fromcurrent: true }]
                     },
-                    zoom: 4 // Adjust zoom level
-                },
-                coloraxis: {
-                    colorscale: 'Spectral_r' // Reversed Spectral color scale
-                },
-                title: 'Heatmap with Mapbox',
-                margin: { t: 50, b: 0, l: 0, r: 0 } // Adjust margins
-            };
+                    {
+                        label: 'Pause',
+                        method: 'animate',
+                        args: [[null], { mode: 'immediate', frame: { duration: 0, redraw: false } }]
+                    }
+                ]
+            }],
+            sliders: [{
+                active: 0,
+                steps: frames.map((frame, i) => ({
+                    label: `Output ${i + 1}`,
+                    method: 'animate',
+                    args: [[frame.name], { mode: 'immediate', frame: { duration: 500, redraw: true } }]
+                }))
+            }]
+        };
 
-            // Plot the heatmap
-            Plotly.newPlot('heatmap', [trace], layout);
-        }
+        // Plot the initial heatmap with frames and slider
+        Plotly.newPlot('heatmap', [initialFrame], layout, { frames });
+    }
 
-        // Call the function to create the heatmap
-        createMapboxHeatmap();
-    </script>
+    // Call the function to create the heatmap
+    createMapboxHeatmap();
+</script>
 </body>
 </html>
