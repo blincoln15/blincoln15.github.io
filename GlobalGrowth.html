@@ -20,7 +20,7 @@
 <script>
     async function createMapboxHeatmap() {
         // Define the CSV file names for each dataset
-        const csvFiles = ['ww_yield_1981.csv', 'ww_yield_1982.csv', 'ww_yield_1983.csv', 'ww_yield_1984.csv', 'ww_yield_1985.csv'];
+        const csvFiles = ['csv/ww_yield_1981.csv', 'csv/ww_yield_1982.csv', 'ww_yield_1983.csv', 'ww_yield_1984.csv', 'ww_yield_1985.csv'];
 
         // Function to load and parse CSV
         async function loadCsv(file) {
@@ -60,7 +60,7 @@
             mapbox: {
                 style: "carto-positron",
                 center: { lat: datasets[0][0].lat, lon: datasets[0][0].lon },
-                zoom: 4
+                zoom: 1
             },
             coloraxis: { colorscale: 'Spectral_r' },
             title: 'Heatmap with Mapbox Slider',
