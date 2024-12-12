@@ -17,9 +17,9 @@
     <div id="line-chart" style="width: 80%; height: 600px; margin: 0 auto;"></div>
 
     <script>
-        // Function to load CSV data and return parsed results
-        function loadCSV(filePath, callback) {
-           return new Promise((resolve, reject) => {
+        // Function to load CSV data and return a promise with parsed results
+        function loadCSV(filePath) {
+            return new Promise((resolve, reject) => {
                 Papa.parse(filePath, {
                     download: true,
                     header: true,
@@ -34,9 +34,9 @@
             });
         }
 
-        // Load all CSV files and prepare the data
+        // Function to load all CSV files and prepare the data
         async function loadData() {
-          try {
+            try {
                 // Load all CSVs concurrently
                 const maizeData = await loadCSV('csv/maize_by_year.csv');
                 const soybeanData = await loadCSV('csv/soybean_by_year.csv');
@@ -56,10 +56,9 @@
                 console.error("Error loading CSV files:", error);
             }
         }
-                   
 
         // Function to plot the line chart using Plotly
-        function plotChart() {
+        function plotChart(maizeData, soybeanData, wheatData, riceData) {
             const traceMaize = {
                 x: maizeData.map(item => item.year),
                 y: maizeData.map(item => item.yield),
@@ -106,9 +105,11 @@
             };
 
             const data = [traceMaize, traceSoybean, traceWheat, traceRice];
-              console.log(data);
+
             Plotly.newPlot('line-chart', data, layout);
         }
+
+        // Call the loadData function to start the process
         loadData();
     </script>
 </body>
