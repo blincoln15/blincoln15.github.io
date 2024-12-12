@@ -37,9 +37,9 @@
         const combinedData = datasets.flat(); // Combine all datasets into one array
 
         // Extract latitude, longitude, and variable values
-        const lat = combinedData.map(row => row.lat);
-        const lon = combinedData.map(row => row.lon);
-        const z = combinedData.map(row => row.var);
+        const lat = combinedData.map(row => row.Latitude);
+        const lon = combinedData.map(row => row.Longitude);
+        const z = combinedData.map(row => row.Var);
 
         // Define the heatmap trace
         const heatmapTrace = {
