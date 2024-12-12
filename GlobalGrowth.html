@@ -15,16 +15,34 @@
   <li style="float:right"><a href="#about">About</a></li>
 </ul>
 <body>
+    <div id="dropdown-container">
+        <label for="crop-select">Select Crop: </label>
+        <select id="crop-select">
+            <option value="rice">Rice</option>
+            <option value="maize">Maize</option>
+            <option value="soybean">Soybean</option>
+            <option value="wheat">Wheat</option>
+        </select>
+    </div>
   <div id="heatmap1" style="width: 48%; height: 600px; display: inline-block;"></div>
   <div id="heatmap2" style="width: 48%; height: 600px; display: inline-block;"></div>
 <script>
-    async function createMapboxHeatmaps() {
+    async function createMapboxHeatmaps(cropType) {
         // Define the CSV file names for each dataset
-        const csvFiles = [
-            'csv/ww_avg_output.csv', // First dataset
-            'csv/ws_avg_output.csv'  // Second dataset
-        ];
-
+        const csvFiles = {
+          rice: ['csv/rw_avg_output.csv','csv/rs_avg_output.csv'],
+          maize: ['csv/mw_avg_output.csv','csv/ms_avg_output.csv'],
+          soybean: ['csv/sb_avg_output.csv'],
+          wheat: ['csv/ww_avg_output.csv', 'csv/ws_avg_output.csv']
+        };
+      
+        // Load the relevant CSV files for the selected crop
+        const files = csvFiles[cropType];
+        if (!files) {
+            console.error('Invalid crop type selected.');
+            return;
+        }
+      
         // Function to load and parse CSV
         async function loadCsv(file) {
             const response = await fetch(file);
@@ -37,16 +55,20 @@
 
         // Extract data for each dataset
         const dataset1 = datasets[0];
-        const dataset2 = datasets[1];
+
 
         // Extract latitude, longitude, and variable values for both datasets
         const lat1 = dataset1.map(row => row.Latitude);
         const lon1 = dataset1.map(row => row.Longitude);
         const z1 = dataset1.map(row => row.Var);
 
-        const lat2 = dataset2.map(row => row.Latitude);
-        const lon2 = dataset2.map(row => row.Longitude);
-        const z2 = dataset2.map(row => row.Var);
+        let dataset2, lat2, lon2, z2;
+        if (datasets.length > 1) {
+            dataset2 = datasets[1];
+            lat2 = dataset2.map(row => row.Latitude);
+            lon2 = dataset2.map(row => row.Longitude);
+            z2 = dataset2.map(row => row.Var);
+        }
 
         // Define the first heatmap trace (from ww_avg_output.csv)
         const heatmapTrace1 = {
@@ -61,7 +83,9 @@
         };
 
         // Define the second heatmap trace (from ws_avg_output.csv)
-        const heatmapTrace2 = {
+        let heatmapTrace2;
+        if (dataset2) {
+          heatmapTrace2 = {
             type: 'densitymapbox',
             lon: lon2,
             lat: lat2,
@@ -70,7 +94,8 @@
             coloraxis: 'coloraxis',
             radius: 10,
             opacity: 0.7 // Set the opacity to visualize both heatmaps clearly
-        };
+          };
+        }
 
         // Define the layout for the first heatmap
         const layout1 = {
@@ -86,7 +111,7 @@
         };
 
         // Define the layout for the second heatmap
-        const layout2 = {
+        const layout2 = dataset2 ? {
             mapbox: {
                 style: "carto-positron",
                 center: { lat: lat2[0], lon: lon2[0] },
@@ -101,12 +126,23 @@
         // Plot the first heatmap
         Plotly.newPlot('heatmap1', [heatmapTrace1], layout1);
 
-        // Plot the second heatmap
-        Plotly.newPlot('heatmap2', [heatmapTrace2], layout2);
+        // Plot the second heatmap only if there's a second dataset
+        if (heatmapTrace2) {
+            Plotly.newPlot('heatmap2', [heatmapTrace2], layout2);
+        } else {
+            // Clear the second heatmap container if there's no second dataset
+            document.getElementById('heatmap2').innerHTML = '';
+        }
     }
 
     // Call the function to create the heatmaps
-    createMapboxHeatmaps();
+    createMapboxHeatmaps('rice');
+
+    // Event listener to change the crop and update the heatmaps
+    document.getElementById('crop-select').addEventListener('change', function () {
+        const selectedCrop = this.value;
+        createMapboxHeatmaps(selectedCrop);
+    });
 </script>
 </body>
 </html>
