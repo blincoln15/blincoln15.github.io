@@ -35,13 +35,27 @@ li a:hover {
 .active {
   background-color: #04AA6D;
 
-.button-container {
+ .button-container {
             display: flex;
             justify-content: space-evenly;
+            align-items: center;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
-        .button-container button {
+        .crop-item {
+            text-align: center;
+        }
+
+        .crop-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .crop-item button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
@@ -51,7 +65,7 @@ li a:hover {
             border-radius: 5px;
         }
 
-        .button-container button:hover {
+        .crop-item button:hover {
             background-color: #45a049;
         }
 }
