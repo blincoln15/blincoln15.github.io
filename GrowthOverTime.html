@@ -33,13 +33,13 @@
         let maizeData = [], soybeanData = [], wheatData = [], riceData = [];
 
         // Load all CSV files and prepare the data
-        loadCSV('maize_by_year.csv', function(data) {
+        loadCSV('csv/maize_by_year.csv', function(data) {
             maizeData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-            loadCSV('soybean_by_year.csv', function(data) {
+            loadCSV('csv/soybean_by_year.csv', function(data) {
                 soybeanData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-                loadCSV('wheat_by_year.csv', function(data) {
+                loadCSV('csv/wheat_by_year.csv', function(data) {
                     wheatData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-                    loadCSV('rice_by_year.csv', function(data) {
+                    loadCSV('csv/rice_by_year.csv', function(data) {
                         riceData = data.map(row => ({ year: row.year, yield: row.summed_var }));
 
                         // After all CSV files are loaded, plot the chart
