@@ -35,29 +35,21 @@
           soybean: ['csv/sb_avg_output.csv'],
           wheat: ['csv/ww_avg_output.csv', 'csv/ws_avg_output.csv']
         };
-      
-        // Load the relevant CSV files for the selected crop
+
         const files = csvFiles[cropType];
         if (!files) {
             console.error('Invalid crop type selected.');
             return;
         }
-      
-        // Function to load and parse CSV
+
         async function loadCsv(file) {
             const response = await fetch(file);
             const csvText = await response.text();
             return Papa.parse(csvText, { header: true, dynamicTyping: true }).data;
         }
 
-        // Load all datasets and combine them
-        const datasets = await Promise.all(csvFiles.map(loadCsv));
-
-        // Extract data for each dataset
+        const datasets = await Promise.all(files.map(loadCsv));
         const dataset1 = datasets[0];
-
-
-        // Extract latitude, longitude, and variable values for both datasets
         const lat1 = dataset1.map(row => row.Latitude);
         const lon1 = dataset1.map(row => row.Longitude);
         const z1 = dataset1.map(row => row.Var);
@@ -70,79 +62,70 @@
             z2 = dataset2.map(row => row.Var);
         }
 
-        // Define the first heatmap trace (from ww_avg_output.csv)
         const heatmapTrace1 = {
             type: 'densitymapbox',
             lon: lon1,
             lat: lat1,
             z: z1,
-            colorscale: 'YlGnBu', // Color scale for first dataset
+            colorscale: 'YlGnBu',
             coloraxis: 'coloraxis',
             radius: 10,
-            opacity: 0.7 // Set the opacity to visualize both heatmaps clearly
+            opacity: 0.7
         };
 
-        // Define the second heatmap trace (from ws_avg_output.csv)
         let heatmapTrace2;
         if (dataset2) {
-          heatmapTrace2 = {
-            type: 'densitymapbox',
-            lon: lon2,
-            lat: lat2,
-            z: z2,
-            colorscale: 'Cividis', // Color scale for second dataset
-            coloraxis: 'coloraxis',
-            radius: 10,
-            opacity: 0.7 // Set the opacity to visualize both heatmaps clearly
-          };
+            heatmapTrace2 = {
+                type: 'densitymapbox',
+                lon: lon2,
+                lat: lat2,
+                z: z2,
+                colorscale: 'Cividis',
+                coloraxis: 'coloraxis',
+                radius: 10,
+                opacity: 0.7
+            };
         }
 
-        // Define the layout for the first heatmap
         const layout1 = {
             mapbox: {
                 style: "carto-positron",
                 center: { lat: lat1[0], lon: lon1[0] },
-                zoom: 0 // Adjust zoom to fit the data
+                zoom: 10,
+                accesstoken: 'your_mapbox_access_token'
             },
-            coloraxis: { colorscale: 'YlGnBu' }, // Color scale for first heatmap
-            title: 'Heatmap for WW Data',
+            coloraxis: { colorscale: 'YlGnBu' },
+            title: `Heatmap for ${cropType.charAt(0).toUpperCase() + cropType.slice(1)}`,
             margin: { t: 50, b: 0, l: 0, r: 0 },
             showlegend: false
         };
 
-        
-
-        // Plot the first heatmap
         Plotly.newPlot('heatmap1', [heatmapTrace1], layout1);
 
-        // Plot the second heatmap only if there's a second dataset
         if (heatmapTrace2) {
-          // Define the layout for the second heatmap
-          const layout2 = dataset2 ? {
-            mapbox: {
-                style: "carto-positron",
-                center: { lat: lat2[0], lon: lon2[0] },
-                zoom: 0 // Adjust zoom to fit the data
-            },
-            coloraxis: { colorscale: 'Cividis' }, // Color scale for second heatmap
-            title: 'Heatmap for WS Data',
-            margin: { t: 50, b: 0, l: 0, r: 0 },
-            showlegend: false
-          };
+            const layout2 = {
+                mapbox: {
+                    style: "carto-positron",
+                    center: { lat: lat2[0], lon: lon2[0] },
+                    zoom: 10,
+                    accesstoken: 'your_mapbox_access_token'
+                },
+                coloraxis: { colorscale: 'Cividis' },
+                title: `Second Heatmap for ${cropType.charAt(0).toUpperCase() + cropType.slice(1)}`,
+                margin: { t: 50, b: 0, l: 0, r: 0 },
+                showlegend: false
+            };
+
             Plotly.newPlot('heatmap2', [heatmapTrace2], layout2);
         } else {
-            // Clear the second heatmap container if there's no second dataset
             document.getElementById('heatmap2').innerHTML = '';
         }
     }
 
-    // Call the function to create the heatmaps
     createMapboxHeatmaps('rice');
 
-    // Event listener to change the crop and update the heatmaps
     document.getElementById('crop-select').addEventListener('change', function () {
-        const selectedCrop = this.value;
-        createMapboxHeatmaps(selectedCrop);
+        createMapboxHeatmaps(this.value);
     });
 </script>
 </body>
