@@ -15,19 +15,25 @@
   <li style="float:right"><a href="#about">About</a></li>
 </ul>
 <body>
-    <div id="dropdown-container">
-        <label for="crop-select">Select Crop: </label>
-        <select id="crop-select">
-            <option value="rice">Rice</option>
-            <option value="maize">Maize</option>
-            <option value="soybean">Soybean</option>
-            <option value="wheat">Wheat</option>
-        </select>
+    //<div id="dropdown-container">
+    //    <label for="crop-select">Select Crop: </label>
+    //    <select id="crop-select">
+    //        <option value="rice">Rice</option>
+    //        <option value="maize">Maize</option>
+    //        <option value="soybean">Soybean</option>
+    //        <option value="wheat">Wheat</option>
+    //    </select>
+    //</div>
+    <div class="button-container">
+        <button onclick="updateHeatmap('rice')">Rice</button>
+        <button onclick="updateHeatmap('maize')">Maize</button>
+        <button onclick="updateHeatmap('soybean')">Soybean</button>
+        <button onclick="updateHeatmap('wheat')">Wheat</button>
     </div>
   <div id="heatmap1" style="width: 48%; height: 600px; display: inline-block;"></div>
   <div id="heatmap2" style="width: 48%; height: 600px; display: inline-block;"></div>
 <script>
-    async function createMapboxHeatmaps(cropType) {
+    async function updateHeatmap(cropType) {
         // Define the CSV file names for each dataset
         const csvFiles = {
           rice: ['csv/rw_avg_output.csv','csv/rs_avg_output.csv'],
@@ -122,11 +128,7 @@
         }
     }
 
-    createMapboxHeatmaps('rice');
-
-    document.getElementById('crop-select').addEventListener('change', function () {
-        createMapboxHeatmaps(this.value);
-    });
+    updateHeatmap('rice');
 </script>
 </body>
 </html>
