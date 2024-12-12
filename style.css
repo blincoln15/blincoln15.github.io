@@ -35,31 +35,22 @@ li a:hover {
 .active {
   background-color: #04AA6D;
 
-.button-container {
+.image-container,
+        .button-container {
             display: flex;
             justify-content: space-around; /* Spread items evenly horizontally */
-            align-items: center; /* Align items vertically centered */
-            margin: 20px 0;
-            flex-wrap: nowrap; /* Ensure they remain in one row */
-        }
-
-        .crop-item {
-            text-align: center;
-            display: flex;
-            flex-direction: column; /* Stack image above button */
             align-items: center;
-            margin: 0 10px; /* Add spacing between items */
+            margin: 20px 0;
         }
 
-        .crop-item img {
+        .image-container img {
             width: 100px;
             height: 100px;
             object-fit: cover;
             border-radius: 8px;
-            margin-bottom: 10px;
         }
 
-        .crop-item button {
+        .button-container button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
@@ -69,7 +60,7 @@ li a:hover {
             border-radius: 5px;
         }
 
-        .crop-item button:hover {
+        .button-container button:hover {
             background-color: #45a049;
         }
 }
