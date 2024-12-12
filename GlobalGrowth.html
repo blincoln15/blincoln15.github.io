@@ -17,7 +17,7 @@
 <body>
     <div id="heatmap" style="width: 600px; height: 400px;"></div>
 <script>
-    async function createMapboxHeatmap() {
+    async function createMapboxHeatmaps() {
         // Define the CSV file names for each dataset
         const csvFiles = [
             'csv/ww_avg_output.csv', // First dataset
@@ -56,7 +56,7 @@
             colorscale: 'YlGnBu', // Color scale for first dataset
             coloraxis: 'coloraxis',
             radius: 10,
-            opacity: 0.7 // Set the opacity to stack with the second heatmap
+            opacity: 0.7 // Set the opacity to visualize both heatmaps clearly
         };
 
         // Define the second heatmap trace (from ws_avg_output.csv)
@@ -68,28 +68,44 @@
             colorscale: 'Cividis', // Color scale for second dataset
             coloraxis: 'coloraxis',
             radius: 10,
-            opacity: 0.7 // Set the opacity to stack with the first heatmap
+            opacity: 0.7 // Set the opacity to visualize both heatmaps clearly
         };
 
-        // Define the layout
-        const layout = {
+        // Define the layout for the first heatmap
+        const layout1 = {
             mapbox: {
                 style: "carto-positron",
                 center: { lat: lat1[0], lon: lon1[0] },
                 zoom: 10 // Adjust zoom to fit the data
             },
-            coloraxis: { colorscale: 'YlGnBu' }, // Define common color scale for both
-            title: 'Stacked Heatmap of WW and WS Data',
+            coloraxis: { colorscale: 'YlGnBu' }, // Color scale for first heatmap
+            title: 'Heatmap for WW Data',
             margin: { t: 50, b: 0, l: 0, r: 0 },
             showlegend: false
         };
 
-        // Plot the stacked heatmaps
-        Plotly.newPlot('heatmap', [heatmapTrace1, heatmapTrace2], layout);
+        // Define the layout for the second heatmap
+        const layout2 = {
+            mapbox: {
+                style: "carto-positron",
+                center: { lat: lat2[0], lon: lon2[0] },
+                zoom: 10 // Adjust zoom to fit the data
+            },
+            coloraxis: { colorscale: 'Cividis' }, // Color scale for second heatmap
+            title: 'Heatmap for WS Data',
+            margin: { t: 50, b: 0, l: 0, r: 0 },
+            showlegend: false
+        };
+
+        // Plot the first heatmap
+        Plotly.newPlot('heatmap1', [heatmapTrace1], layout1);
+
+        // Plot the second heatmap
+        Plotly.newPlot('heatmap2', [heatmapTrace2], layout2);
     }
 
-    // Call the function to create the heatmap
-    createMapboxHeatmap();
+    // Call the function to create the heatmaps
+    createMapboxHeatmaps();
 </script>
 </body>
 </html>
