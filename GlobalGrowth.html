@@ -31,6 +31,8 @@
     
   <div id="heatmap1" style="width: 48%; height: 600px; display: inline-block;"></div>
   <div id="heatmap2" style="width: 48%; height: 600px; display: inline-block;"></div>
+
+  <div id="paragraph">Select a crop to see more information.</div>
 <script>
     async function updateHeatmap(cropType) {
         // Define the CSV file names for each dataset
@@ -40,6 +42,17 @@
           soybean: ['csv/sb_avg_output.csv'],
           wheat: ['csv/ww_avg_output.csv', 'csv/ws_avg_output.csv']
         };
+
+        const paragraphs = {
+            rice: "Rice is a staple food for more than half of the world's population. This heatmap shows distribution and growth data for rice cultivation.",
+            maize: "Maize, also known as corn, is a versatile crop used for food, feed, and fuel. Explore its production hotspots with this heatmap.",
+            soybean: "Soybean is a major source of protein and oil. The map illustrates key regions of soybean growth.",
+            wheat: "Wheat is one of the most widely cultivated grains globally. This heatmap highlights areas of high wheat production."
+        };
+
+        // Update paragraph content
+        const paragraphDiv = document.getElementById('paragraph');
+        paragraphDiv.textContent = paragraphs[cropType];
 
         const files = csvFiles[cropType];
         if (!files) {
