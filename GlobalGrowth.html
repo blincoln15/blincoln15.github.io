@@ -110,8 +110,15 @@
             showlegend: false
         };
 
-        // Define the layout for the second heatmap
-        const layout2 = dataset2 ? {
+        
+
+        // Plot the first heatmap
+        Plotly.newPlot('heatmap1', [heatmapTrace1], layout1);
+
+        // Plot the second heatmap only if there's a second dataset
+        if (heatmapTrace2) {
+          // Define the layout for the second heatmap
+          const layout2 = dataset2 ? {
             mapbox: {
                 style: "carto-positron",
                 center: { lat: lat2[0], lon: lon2[0] },
@@ -121,13 +128,7 @@
             title: 'Heatmap for WS Data',
             margin: { t: 50, b: 0, l: 0, r: 0 },
             showlegend: false
-        };
-
-        // Plot the first heatmap
-        Plotly.newPlot('heatmap1', [heatmapTrace1], layout1);
-
-        // Plot the second heatmap only if there's a second dataset
-        if (heatmapTrace2) {
+          };
             Plotly.newPlot('heatmap2', [heatmapTrace2], layout2);
         } else {
             // Clear the second heatmap container if there's no second dataset
