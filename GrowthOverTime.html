@@ -34,13 +34,13 @@
 
         // Load all CSV files and prepare the data
         loadCSV('maize_year.csv', function(data) {
-            maizeData = data.map(row => ({ year: row.Year, yield: row.Tonnes_per_Hectare }));
+            maizeData = data.map(row => ({ year: row.Year, yield: row.Var }));
             loadCSV('soybean_year.csv', function(data) {
-                soybeanData = data.map(row => ({ year: row.Year, yield: row.Tonnes_per_Hectare }));
+                soybeanData = data.map(row => ({ year: row.Year, yield: row.Var }));
                 loadCSV('wheat_year.csv', function(data) {
-                    wheatData = data.map(row => ({ year: row.Year, yield: row.Tonnes_per_Hectare }));
+                    wheatData = data.map(row => ({ year: row.Year, yield: row.Var }));
                     loadCSV('rice_year.csv', function(data) {
-                        riceData = data.map(row => ({ year: row.Year, yield: row.Tonnes_per_Hectare }));
+                        riceData = data.map(row => ({ year: row.Year, yield: row.Var }));
 
                         // After all CSV files are loaded, plot the chart
                         plotChart();
