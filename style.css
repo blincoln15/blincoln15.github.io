@@ -40,6 +40,7 @@ li a:hover {
 
 .active {
   background-color: #04AA6D;
+}
 
 .image-container,
         .button-container {
@@ -71,6 +72,7 @@ li a:hover {
         .button-container button:hover {
             background-color: #45a049;
         }
+
   #paragraph {
             margin: 20px 0;
             padding: 10px;
@@ -81,4 +83,4 @@ li a:hover {
             font-size: 16px;
             background-color: #f9f9f9;
         }
-}
+
