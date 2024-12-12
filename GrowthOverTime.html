@@ -36,6 +36,7 @@
         loadCSV('csv/maize_by_year.csv', function(data) {
           console.log(data);
             maizeData = data.map(row => ({ year: row.year, yield: row.summed_var }));
+              console.log(maizeData);
         });
         loadCSV('csv/soybean_by_year.csv', function(data) {
             soybeanData = data.map(row => ({ year: row.year, yield: row.summed_var }));
