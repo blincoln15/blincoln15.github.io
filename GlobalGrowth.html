@@ -37,10 +37,10 @@
     async function updateHeatmap(cropType) {
         // Define the CSV file names for each dataset
         const csvFiles = {
-          rice: ['csv/rw_avg_output.csv','csv/rs_avg_output.csv'],
-          maize: ['csv/mw_avg_output.csv','csv/ms_avg_output.csv'],
+          rice: ['csv/rs_avg_output.csv','csv/rw_avg_output.csv'],
+          maize: ['csv/ms_avg_output.csv','csv/mw_avg_output.csv'],
           soybean: ['csv/sb_avg_output.csv'],
-          wheat: ['csv/ww_avg_output.csv', 'csv/ws_avg_output.csv']
+          wheat: ['csv/ws_avg_output.csv', 'csv/ww_avg_output.csv']
         };
 
         const paragraphs = {
@@ -85,7 +85,7 @@
             lon: lon1,
             lat: lat1,
             z: z1,
-            colorscale: 'YlGnBu',
+            colorscale: 'Cividis',
             coloraxis: 'coloraxis',
             radius: 10,
             opacity: 0.7
@@ -98,7 +98,7 @@
                 lon: lon2,
                 lat: lat2,
                 z: z2,
-                colorscale: 'Cividis',
+                colorscale: 'YlGnBu',
                 coloraxis: 'coloraxis',
                 radius: 10,
                 opacity: 0.7
@@ -112,8 +112,8 @@
                 zoom: 0,
                 accesstoken: 'your_mapbox_access_token'
             },
-            coloraxis: { colorscale: 'YlGnBu' },
-            title: `Heatmap for ${cropType.charAt(0).toUpperCase() + cropType.slice(1)}`,
+            coloraxis: { colorscale: 'Cividis' },
+            title: `Major Season Heatmap for ${cropType.charAt(0).toUpperCase() + cropType.slice(1)}`,
             margin: { t: 50, b: 0, l: 0, r: 0 },
             showlegend: false
         };
@@ -128,8 +128,8 @@
                     zoom: 0,
                     accesstoken: 'your_mapbox_access_token'
                 },
-                coloraxis: { colorscale: 'Cividis' },
-                title: `Second Heatmap for ${cropType.charAt(0).toUpperCase() + cropType.slice(1)}`,
+                coloraxis: { colorscale: 'YlGnBu' },
+                title: `Minor Season Heatmap for ${cropType.charAt(0).toUpperCase() + cropType.slice(1)}`,
                 margin: { t: 50, b: 0, l: 0, r: 0 },
                 showlegend: false
             };
