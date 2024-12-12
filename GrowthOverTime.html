@@ -19,36 +19,43 @@
     <script>
         // Function to load CSV data and return parsed results
         function loadCSV(filePath, callback) {
-            Papa.parse(filePath, {
-                download: true,
-                header: true,
-                dynamicTyping: true,
-                complete: function(results) {
-                    callback(results.data);
-                }
+           return new Promise((resolve, reject) => {
+                Papa.parse(filePath, {
+                    download: true,
+                    header: true,
+                    dynamicTyping: true,
+                    complete: function(results) {
+                        resolve(results.data);
+                    },
+                    error: function(error) {
+                        reject(error);
+                    }
+                });
             });
         }
 
-        // Data arrays to store crop yield data
-        let maizeData = [], soybeanData = [], wheatData = [], riceData = [];
-
         // Load all CSV files and prepare the data
-        loadCSV('csv/maize_by_year.csv', function(data) {
-          console.log(data);
-            maizeData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-              console.log(maizeData);
-        });
-        loadCSV('csv/soybean_by_year.csv', function(data) {
-            soybeanData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-        });
-        loadCSV('csv/wheat_by_year.csv', function(data) {
-            wheatData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-        });
-        loadCSV('csv/rice_by_year.csv', function(data) {
-            riceData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-        });
-                        // After all CSV files are loaded, plot the chart
-        plotChart();
+        async function loadData() {
+          try {
+                // Load all CSVs concurrently
+                const maizeData = await loadCSV('csv/maize_by_year.csv');
+                const soybeanData = await loadCSV('csv/soybean_by_year.csv');
+                const wheatData = await loadCSV('csv/wheat_by_year.csv');
+                const riceData = await loadCSV('csv/rice_by_year.csv');
+
+                // Map the data for each crop
+                const maizeMapped = maizeData.map(row => ({ year: row.year, yield: row.summed_var }));
+                const soybeanMapped = soybeanData.map(row => ({ year: row.year, yield: row.summed_var }));
+                const wheatMapped = wheatData.map(row => ({ year: row.year, yield: row.summed_var }));
+                const riceMapped = riceData.map(row => ({ year: row.year, yield: row.summed_var }));
+
+                // After all CSV files are loaded and mapped, plot the chart
+                plotChart(maizeMapped, soybeanMapped, wheatMapped, riceMapped);
+
+            } catch (error) {
+                console.error("Error loading CSV files:", error);
+            }
+        }
                    
 
         // Function to plot the line chart using Plotly
@@ -102,6 +109,7 @@
               console.log(data);
             Plotly.newPlot('line-chart', data, layout);
         }
+        loadData();
     </script>
 </body>
 </html>
