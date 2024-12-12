@@ -16,13 +16,12 @@
 </ul>
 <body>
     <div id="heatmap" style="width: 600px; height: 400px;"></div>
-    <div id="heatmap" style="width: 600px; height: 400px;"></div>
 <script>
     async function createMapboxHeatmap() {
         // Define the CSV file names for each dataset
         const csvFiles = [
-            'csv/ww_avg_output.csv'
-            // Add more file paths if needed
+            'csv/ww_avg_output.csv', // First dataset
+            'csv/ws_avg_output.csv'  // Second dataset
         ];
 
         // Function to load and parse CSV
@@ -34,38 +33,59 @@
 
         // Load all datasets and combine them
         const datasets = await Promise.all(csvFiles.map(loadCsv));
-        const combinedData = datasets.flat(); // Combine all datasets into one array
 
-        // Extract latitude, longitude, and variable values
-        const lat = combinedData.map(row => row.Latitude);
-        const lon = combinedData.map(row => row.Longitude);
-        const z = combinedData.map(row => row.Var);
+        // Extract data for each dataset
+        const dataset1 = datasets[0];
+        const dataset2 = datasets[1];
 
-        // Define the heatmap trace
-        const heatmapTrace = {
+        // Extract latitude, longitude, and variable values for both datasets
+        const lat1 = dataset1.map(row => row.Latitude);
+        const lon1 = dataset1.map(row => row.Longitude);
+        const z1 = dataset1.map(row => row.Var);
+
+        const lat2 = dataset2.map(row => row.Latitude);
+        const lon2 = dataset2.map(row => row.Longitude);
+        const z2 = dataset2.map(row => row.Var);
+
+        // Define the first heatmap trace (from ww_avg_output.csv)
+        const heatmapTrace1 = {
             type: 'densitymapbox',
-            lon: lon,
-            lat: lat,
-            z: z,
-            colorscale: 'YlGnBu',
+            lon: lon1,
+            lat: lat1,
+            z: z1,
+            colorscale: 'YlGnBu', // Color scale for first dataset
             coloraxis: 'coloraxis',
-            radius: 10
+            radius: 10,
+            opacity: 0.7 // Set the opacity to stack with the second heatmap
+        };
+
+        // Define the second heatmap trace (from ws_avg_output.csv)
+        const heatmapTrace2 = {
+            type: 'densitymapbox',
+            lon: lon2,
+            lat: lat2,
+            z: z2,
+            colorscale: 'Cividis', // Color scale for second dataset
+            coloraxis: 'coloraxis',
+            radius: 10,
+            opacity: 0.7 // Set the opacity to stack with the first heatmap
         };
 
         // Define the layout
         const layout = {
             mapbox: {
                 style: "carto-positron",
-                center: { lat: lat[0], lon: lon[0] },
-                zoom: 0
+                center: { lat: lat1[0], lon: lon1[0] },
+                zoom: 10 // Adjust zoom to fit the data
             },
-            coloraxis: { colorscale: 'YlGnBu' },
-            title: 'Aggregated Heatmap',
-            margin: { t: 50, b: 0, l: 0, r: 0 }
+            coloraxis: { colorscale: 'YlGnBu' }, // Define common color scale for both
+            title: 'Stacked Heatmap of WW and WS Data',
+            margin: { t: 50, b: 0, l: 0, r: 0 },
+            showlegend: false
         };
 
-        // Plot the heatmap
-        Plotly.newPlot('heatmap', [heatmapTrace], layout);
+        // Plot the stacked heatmaps
+        Plotly.newPlot('heatmap', [heatmapTrace1, heatmapTrace2], layout);
     }
 
     // Call the function to create the heatmap
