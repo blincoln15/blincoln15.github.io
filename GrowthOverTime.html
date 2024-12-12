@@ -35,19 +35,19 @@
         // Load all CSV files and prepare the data
         loadCSV('csv/maize_by_year.csv', function(data) {
             maizeData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-            loadCSV('csv/soybean_by_year.csv', function(data) {
-                soybeanData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-                loadCSV('csv/wheat_by_year.csv', function(data) {
-                    wheatData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-                    loadCSV('csv/rice_by_year.csv', function(data) {
-                        riceData = data.map(row => ({ year: row.year, yield: row.summed_var }));
-
-                        // After all CSV files are loaded, plot the chart
-                        plotChart();
-                    });
-                });
-            });
         });
+        loadCSV('csv/soybean_by_year.csv', function(data) {
+            soybeanData = data.map(row => ({ year: row.year, yield: row.summed_var }));
+        });
+        loadCSV('csv/wheat_by_year.csv', function(data) {
+            wheatData = data.map(row => ({ year: row.year, yield: row.summed_var }));
+        });
+        loadCSV('csv/rice_by_year.csv', function(data) {
+            riceData = data.map(row => ({ year: row.year, yield: row.summed_var }));
+        });
+                        // After all CSV files are loaded, plot the chart
+        plotChart();
+                   
 
         // Function to plot the line chart using Plotly
         function plotChart() {
