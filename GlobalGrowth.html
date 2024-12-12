@@ -16,10 +16,22 @@
 </ul>
 <body>
     <div class="button-container">
-        <button onclick="updateHeatmap('rice')">Rice</button>
-        <button onclick="updateHeatmap('maize')">Maize</button>
-        <button onclick="updateHeatmap('soybean')">Soybean</button>
-        <button onclick="updateHeatmap('wheat')">Wheat</button>
+        <div class="crop-item">
+            <img src="images/rice.jpg" alt="Rice">
+            <button onclick="updateHeatmap('rice')">Rice</button>
+        </div>
+        <div class="crop-item">
+            <img src="images/corn.png" alt="Maize">
+            <button onclick="updateHeatmap('maize')">Maize</button>
+        </div>
+        <div class="crop-item">
+            <img src="images/soybean.jpg" alt="Soybean">
+            <button onclick="updateHeatmap('soybean')">Soybean</button>
+        </div>
+        <div class="crop-item">
+            <img src="images/wheat.png" alt="Wheat">
+            <button onclick="updateHeatmap('wheat')">Wheat</button>
+        </div>
     </div>
   <div id="heatmap1" style="width: 48%; height: 600px; display: inline-block;"></div>
   <div id="heatmap2" style="width: 48%; height: 600px; display: inline-block;"></div>
