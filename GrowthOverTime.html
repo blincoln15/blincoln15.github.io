@@ -2,6 +2,9 @@
 <html>
 <head>
   <link rel="stylesheet" href="style.css">
+  <title>Crop Yield Comparison</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <ul>
   <li><a href="index.html">Home</a></li>
@@ -11,19 +14,92 @@
 </ul>
 <body>
 
-<h1>My First Heading</h1>
-<p>
-Explore the Global Dataset of Historical Yield (GDHYv1.2+v1.3)
-Dive into the comprehensive Global Dataset of Historical Yield (GDHYv1.2+v1.3), a rich resource offering annual time series data on the yield estimates of key crops—maize, rice, wheat, and soybean—across the globe. 
-  Spanning from 1981 to 2016, this dataset presents high-resolution, 0.5-degree grid-cell data in t/ha units, derived from satellite-based vegetation indices and FAO-reported country yield statistics. 
-  With detailed seasonal breakdowns, including "major" and "secondary" growing seasons for maize and rice, and "winter" and "spring" for wheat, the dataset provides nuanced insights into global agricultural patterns.
-  By combining satellite-derived data and established country statistics, GDHY ensures reliable continuity in its time series, particularly in its "aligned version" covering 2011-2016. 
-  Explore how changing geographic and temporal factors affect agricultural productivity and gain valuable insights for research, policy, and global food security planning.  
-  My first paragraph.
+    <div id="line-chart" style="width: 80%; height: 600px; margin: 0 auto;"></div>
 
-Data comes from:
-https://doi.pangaea.de/10.1594/PANGAEA.909132
-</p>
+    <script>
+        // Function to load CSV data and return parsed results
+        function loadCSV(filePath, callback) {
+            Papa.parse(filePath, {
+                download: true,
+                header: true,
+                dynamicTyping: true,
+                complete: function(results) {
+                    callback(results.data);
+                }
+            });
+        }
 
+        // Data arrays to store crop yield data
+        let maizeData = [], soybeanData = [], wheatData = [], riceData = [];
+
+        // Load all CSV files and prepare the data
+        loadCSV('maize_year.csv', function(data) {
+            maizeData = data.map(row => ({ year: row.Year, yield: row.Tonnes_per_Hectare }));
+            loadCSV('soybean_year.csv', function(data) {
+                soybeanData = data.map(row => ({ year: row.Year, yield: row.Tonnes_per_Hectare }));
+                loadCSV('wheat_year.csv', function(data) {
+                    wheatData = data.map(row => ({ year: row.Year, yield: row.Tonnes_per_Hectare }));
+                    loadCSV('rice_year.csv', function(data) {
+                        riceData = data.map(row => ({ year: row.Year, yield: row.Tonnes_per_Hectare }));
+
+                        // After all CSV files are loaded, plot the chart
+                        plotChart();
+                    });
+                });
+            });
+        });
+
+        // Function to plot the line chart using Plotly
+        function plotChart() {
+            const traceMaize = {
+                x: maizeData.map(item => item.year),
+                y: maizeData.map(item => item.yield),
+                mode: 'lines+markers',
+                name: 'Maize',
+                line: { color: 'green' }
+            };
+
+            const traceSoybean = {
+                x: soybeanData.map(item => item.year),
+                y: soybeanData.map(item => item.yield),
+                mode: 'lines+markers',
+                name: 'Soybean',
+                line: { color: 'blue' }
+            };
+
+            const traceWheat = {
+                x: wheatData.map(item => item.year),
+                y: wheatData.map(item => item.yield),
+                mode: 'lines+markers',
+                name: 'Wheat',
+                line: { color: 'gold' }
+            };
+
+            const traceRice = {
+                x: riceData.map(item => item.year),
+                y: riceData.map(item => item.yield),
+                mode: 'lines+markers',
+                name: 'Rice',
+                line: { color: 'red' }
+            };
+
+            const layout = {
+                title: 'Crop Yield Comparison (Tonnes per Hectare)',
+                xaxis: {
+                    title: 'Year',
+                    showgrid: false,
+                },
+                yaxis: {
+                    title: 'Tonnes per Hectare',
+                    showgrid: true,
+                },
+                showlegend: true
+            };
+
+            const data = [traceMaize, traceSoybean, traceWheat, traceRice];
+
+            Plotly.newPlot('line-chart', data, layout);
+        }
+    </script>
 </body>
 </html>
