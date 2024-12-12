@@ -35,22 +35,25 @@ li a:hover {
 .active {
   background-color: #04AA6D;
 
- .button-container {
+.button-container {
             display: flex;
-            justify-content: space-evenly;
-            align-items: center;
+            justify-content: space-around; /* Spread items evenly horizontally */
+            align-items: center; /* Align items vertically centered */
             margin: 20px 0;
+            flex-wrap: nowrap; /* Ensure they remain in one row */
         }
 
         .crop-item {
+            text-align: center;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Stack image above button */
             align-items: center;
+            margin: 0 10px; /* Add spacing between items */
         }
 
         .crop-item img {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             object-fit: cover;
             border-radius: 8px;
             margin-bottom: 10px;
